@@ -42,17 +42,23 @@ export function ImpactChart() {
   const totalSaved = data.reduce((sum, item) => sum + item.saved, 0)
   const totalTrees = Math.floor(totalSaved / 22.4)
   const totalCostSavings = totalSaved * 0.05
+ const [isClient, setIsClient] = useState(false)
 
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
+  if (!isClient) return null 
   return (
     <div className="space-y-4">
       {/* Impact Summary */}
       <div className="grid grid-cols-3 gap-4 mb-4">
         <div className="text-center p-3 bg-green-50 rounded-lg">
-          <div className="text-2xl font-bold text-green-700">{(totalSaved / 1000).toFixed(1)}kg</div>
+        <div className="text-2xl font-bold text-green-700">{(totalSaved / 1000).toFixed(1)}kg</div>
           <div className="text-xs text-gray-600">CO₂ Prevented (30 days)</div>
         </div>
         <div className="text-center p-3 bg-blue-50 rounded-lg">
-          <div className="text-2xl font-bold text-blue-700">{totalTrees}</div>
+        <div className="text-2xl font-bold text-blue-700">{totalTrees}</div>
           <div className="text-xs text-gray-600">Trees Worth Impact</div>
         </div>
         <div className="text-center p-3 bg-purple-50 rounded-lg">
@@ -90,9 +96,9 @@ export function ImpactChart() {
       </div>
 
       {/* Chart */}
-      <div className="h-[350px] w-full">
+     <div className="h-[350px] w-full">
         <ResponsiveContainer width="100%" height="100%">
-          {viewMode === "impact" && (
+          {viewMode === "impact" ? (
             <ComposedChart data={data}>
               <defs>
                 <linearGradient id="colorSaved" x1="0" y1="0" x2="0" y2="1">
@@ -140,9 +146,7 @@ export function ImpactChart() {
               />
               <Bar yAxisId="right" dataKey="treesEquivalent" fill="#10b981" opacity={0.6} radius={[2, 2, 0, 0]} />
             </ComposedChart>
-          )}
-
-          {viewMode === "emissions" && (
+          ) : viewMode === "emissions" ? (
             <AreaChart data={data}>
               <defs>
                 <linearGradient id="colorBaseline" x1="0" y1="0" x2="0" y2="1">
@@ -190,9 +194,7 @@ export function ImpactChart() {
                 fill="url(#colorActual)"
               />
             </AreaChart>
-          )}
-
-          {viewMode === "savings" && (
+          ) : (
             <BarChart data={data}>
               <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#6b7280" }} />
               <YAxis
